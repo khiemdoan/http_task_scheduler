@@ -77,4 +77,22 @@ def update(schedule_id):
     manager = ScheduleManager()
     schedule = manager.update(schedule_id, name, time, method, uri, parameters, comment)
 
-    return success(schedule=schedule)
+    return success(schedule=schedule.serialize())
+
+
+@service.route('/name/<string:schedule_name>', methods=['PUT'])
+def update_by_name(schedule_name):
+    request_info = request.get_json()
+
+    name = request_info.get('name')
+    time = request_info.get('time')
+    method = request_info.get('method')
+    uri = request_info.get('uri')
+    parameters = request_info.get('parameters')
+    comment = request_info.get('comment')
+
+    manager = ScheduleManager()
+    schedules = manager.update_by_name(schedule_name, name, time, method, uri, parameters, comment)
+    schedules = [s.serialize() for s in schedules]
+
+    return success(schedules=schedules)

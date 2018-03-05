@@ -83,6 +83,27 @@ class ScheduleManager:
         self._update_cron()
         return schedule
 
+    def update_by_name(self, schedule_name: str,
+                       name: str, time: str, method: str, uri: str,
+                       parameters: str, comment: str) -> List[Schedule]:
+        schedules = self._db.get_schedules_by_name(schedule_name)
+        for schedule in schedules:
+            if isinstance(name, str) and len(name):
+                schedule.name = name
+            if isinstance(time, str) and len(time):
+                schedule.time = time
+            if isinstance(method, str) and len(method):
+                schedule.method = method
+            if isinstance(uri, str) and len(uri):
+                schedule.uri = uri
+            if isinstance(parameters, str) and len(parameters):
+                schedule.parameters = parameters
+            if isinstance(comment, str) and len(comment):
+                schedule.comment = comment
+        self._db.update_schedule()
+        self._update_cron()
+        return schedules
+
     def _update_cron(self) -> None:
         """Update crontab follow database"""
         cron = CronTab(user=True)
