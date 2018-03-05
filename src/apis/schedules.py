@@ -30,7 +30,7 @@ def add():
     try:
         schedule, errors = manager.add(name, time, method, uri, parameters, comment)
         return success(schedule=schedule.serialize())
-    except Exception as ex:
+    except ValueError as ex:
         return fail(schedule=None, errors=ex.args)
 
 
@@ -38,7 +38,14 @@ def add():
 def get(schedule_id):
     manager = ScheduleManager()
     schedule = manager.get(schedule_id)
-    return success(schedule=schedule)
+    return success(schedule=schedule.serialize())
+
+
+@service.route('/name/<string:schedule_name>')
+def get_by_name(schedule_name):
+    schedules = ScheduleManager().get_by_name(schedule_name)
+    schedules = [s.serialize() for s in schedules]
+    return success(schedules=schedules)
 
 
 @service.route('/<int:schedule_id>', methods=['DELETE'])

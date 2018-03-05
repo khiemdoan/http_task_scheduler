@@ -1,1 +1,1 @@
-from .connector import Connector
+from .schedule_connector import ScheduleConnector

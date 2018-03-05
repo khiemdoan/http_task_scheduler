@@ -1,19 +1,20 @@
-from typing import List, Tuple
-from database import Connector as DbConnector
+from typing import List
 from crontab import CronTab
+import json
 
+from database import ScheduleConnector as DbConnector
 from database.models import Schedule
 from worker import get_worker_file
-import json
+
 
 
 class ScheduleManager:
     """Job manager"""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._db = DbConnector()
 
-    def list(self):
+    def list(self) -> List[Schedule]:
         """Get all schedules"""
         return self._db.get_all_schedule()
 
@@ -30,7 +31,7 @@ class ScheduleManager:
             errors.append('Uri must be string and not empty')
 
         if len(errors):
-            raise Exception(errors)
+            raise ValueError(errors)
 
         if not isinstance(name, str):
             name = ''
@@ -47,6 +48,9 @@ class ScheduleManager:
 
     def get(self, schedule_id: int) -> Schedule:
         return self._db.get_schedule(schedule_id)
+
+    def get_by_name(self, name: str) -> List[Schedule]:
+        return self._db.get_schedules_by_name(name)
 
     def delete(self, schedule_id: int) -> bool:
         """Delete a schedule"""

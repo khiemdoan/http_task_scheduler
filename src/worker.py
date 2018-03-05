@@ -4,7 +4,7 @@ import requests
 import json
 import logging
 
-from database import Connector as DbConnector
+from database import ScheduleConnector as DbConnector
 
 
 logging_level = logging.NOTSET if __name__ == '__main__' else logging.WARNING
