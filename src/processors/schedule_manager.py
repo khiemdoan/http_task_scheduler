@@ -58,6 +58,11 @@ class ScheduleManager:
         self._update_cron()
         return result
 
+    def delete_by_name(self, name) -> bool:
+        result = self._db.delete_schedule_by_name(name)
+        self._update_cron()
+        return result
+
     def update(self, schedule_id: int,
                name: str, time: str, method: str, uri: str,
                parameters: str, comment: str) -> Schedule:

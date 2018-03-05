@@ -39,6 +39,13 @@ class ScheduleConnector(Connector):
             return True
         return False
 
+    def delete_schedule_by_name(self, name: str) -> bool:
+        schedules = self.get_schedules_by_name(name)
+        for schedule in schedules:
+            self._session.delete(schedule)
+        self._session.commit()
+        return True
+
     def update_schedule(self):
         self._session.commit()
 

@@ -57,6 +57,12 @@ def delete(schedule_id):
     return fail()
 
 
+@service.route('/name/<string:schedule_name>', methods=['DELETE'])
+def delete_by_name(schedule_name):
+    result = ScheduleManager().delete_by_name(schedule_name)
+    return success() if result else fail()
+
+
 @service.route('/<int:schedule_id>', methods=['PUT'])
 def update(schedule_id):
     request_info = request.get_json()
