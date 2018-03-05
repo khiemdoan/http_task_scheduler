@@ -8,7 +8,7 @@ Run
 
 ```
 docker run -it --rm \
---name schedule_service \
+--name http_task_scheduler \
 --volume "$PWD/src":/src \
 --publish 6000:6000 \
 http_task_scheduler:latest

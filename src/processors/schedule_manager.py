@@ -1,5 +1,8 @@
+from typing import List, Tuple
 from database import Connector as DbConnector
 from crontab import CronTab
+
+from database.models import Schedule
 from worker import get_worker_file
 import json
 
@@ -14,19 +17,20 @@ class ScheduleManager:
         """Get all schedules"""
         return self._db.get_all_schedule()
 
-    def add(self, name: str, time: str, method: str, uri: str, parameters: str, comment: str):
+    def add(self, name: str, time: str, method: str, uri: str,
+            parameters: str, comment: str) -> Schedule:
         """Add a schedule"""
         errors = []
 
         if not isinstance(time, str) or len(time) == 0:
-            errors.append('Time must be not empty')
+            errors.append('Time must be string and not empty')
         if not isinstance(method, str) or len(time) == 0:
-            errors.append('Method must be not empty')
+            errors.append('Method must be string and not empty')
         if not isinstance(uri, str) or len(time) == 0:
-            errors.append('Uri must be not empty')
+            errors.append('Uri must be string and not empty')
 
         if len(errors):
-            return None, errors
+            raise Exception(errors)
 
         if not isinstance(name, str):
             name = ''
@@ -39,7 +43,10 @@ class ScheduleManager:
 
         schedule = self._db.add_schedule(name, time, method, uri, parameters, comment)
         self._update_cron()
-        return schedule, errors
+        return schedule
+
+    def get(self, schedule_id: int) -> Schedule:
+        return self._db.get_schedule(schedule_id)
 
     def delete(self, schedule_id: int) -> bool:
         """Delete a schedule"""
@@ -47,7 +54,9 @@ class ScheduleManager:
         self._update_cron()
         return result
 
-    def update(self, schedule_id: int, name: str, time: str, method: str, uri: str, parameters: str, comment: str):
+    def update(self, schedule_id: int,
+               name: str, time: str, method: str, uri: str,
+               parameters: str, comment: str) -> Schedule:
         schedule = self._db.get_schedule(schedule_id)
         if isinstance(name, str) and len(name):
             schedule.name = name
@@ -65,7 +74,7 @@ class ScheduleManager:
         self._update_cron()
         return schedule
 
-    def _update_cron(self):
+    def _update_cron(self) -> None:
         """Update crontab follow database"""
         cron = CronTab(user=True)
         cron.remove_all()

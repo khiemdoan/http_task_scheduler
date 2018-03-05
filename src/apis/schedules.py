@@ -27,10 +27,18 @@ def add():
     comment = request_info.get('comment')
 
     manager = ScheduleManager()
-    schedule, errors = manager.add(name, time, method, uri, parameters, comment)
-    if errors:
-        return fail(schedule=None, errors=errors)
-    return success(schedule=schedule.serialize())
+    try:
+        schedule, errors = manager.add(name, time, method, uri, parameters, comment)
+        return success(schedule=schedule.serialize())
+    except Exception as ex:
+        return fail(schedule=None, errors=ex.args)
+
+
+@service.route('/<int:schedule_id>')
+def get(schedule_id):
+    manager = ScheduleManager()
+    schedule = manager.get(schedule_id)
+    return success(schedule=schedule)
 
 
 @service.route('/<int:schedule_id>', methods=['DELETE'])
