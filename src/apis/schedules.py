@@ -19,6 +19,9 @@ def get_all():
 def add():
     request_info = request.get_json()
 
+    if request_info is None:
+        return fail(schedule=None, errors=['You need pass more parameters.'])
+
     name = request_info.get('name')
     time = request_info.get('time')
     method = request_info.get('method')
@@ -28,7 +31,7 @@ def add():
 
     manager = ScheduleManager()
     try:
-        schedule, errors = manager.add(name, time, method, uri, parameters, comment)
+        schedule = manager.add(name, time, method, uri, parameters, comment)
         return success(schedule=schedule.serialize())
     except ValueError as ex:
         return fail(schedule=None, errors=ex.args)
